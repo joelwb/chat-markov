@@ -37,9 +37,6 @@ export namespace MainActions {
     constructor(public chat: Chat) { }
   }
 
-  export class CreatingNewChat {
-    static readonly type = `${ACTION_SCOPE} CreatingNewChat`;
-  }
 
   export class ToogleSideBar {
     static readonly type = `${ACTION_SCOPE} ToogleNavBar`;

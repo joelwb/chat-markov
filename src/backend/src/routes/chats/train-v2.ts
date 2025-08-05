@@ -1,10 +1,10 @@
-import { streamText } from 'hono/streaming';
+import { SSEStreamingApi, streamSSE } from 'hono/streaming';
 import { DB } from "https://deno.land/x/sqlite/mod.ts";
 import { exists } from "jsr:@std/fs/exists";
 import path from "node:path";
 import { Chat, CHAT_PREFIX, ChatState } from "../../domain/chat.ts";
 import { Message, MESSAGE_PREFIX, MessageSendedBy } from "../../domain/messages.ts";
-import { getDatabasePath, getTrainFilesPath, StreamingApi } from "../../utils.ts";
+import { getDatabasePath, getTrainFilesPath } from "../../utils.ts";
 import { TrainWorkerInputMessage } from "../../workers/train.worker.ts";
 import { TrainWorkerListener } from "../../workers/utils.ts";
 import { WorkerManager } from "../../workers/worker-pool.ts";
@@ -74,7 +74,7 @@ export class TrainEndpointV2 extends BaseEndpoint {
             db.execute("PRAGMA foreign_keys = OFF");
             db.close();
 
-            return streamText(
+            return streamSSE(
                 c,
                 async (stream) => {
                     await this.train(filename, chat, stream);
@@ -88,7 +88,7 @@ export class TrainEndpointV2 extends BaseEndpoint {
         });
     }
 
-    train(filename: string, chat: Chat, streamResponse: StreamingApi) {
+    train(filename: string, chat: Chat, streamResponse: SSEStreamingApi) {
         return new Promise((resolve, rejects) => {
             const worker = WorkerManager.create(chat.id, "train.worker.ts");
 

@@ -41,8 +41,9 @@ export class ChatService {
       if (event.type === HttpEventType.DownloadProgress) {
         const partialText = (event as HttpDownloadProgressEvent).partialText;
         if (!partialText) return -1;
-        const progresses = partialText.slice(0, -1).split('|');
-        const progress = progresses.pop()!
+        const progresses = partialText.slice(0, -2).split('\n');
+        const dataProgress = progresses.pop()!;
+        const progress = dataProgress.replace('data: ', '');
         return +progress;
       } else if (event.type === HttpEventType.Response) {
         return 100;

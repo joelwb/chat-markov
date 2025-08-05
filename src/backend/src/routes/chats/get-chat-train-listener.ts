@@ -1,6 +1,5 @@
-import { streamText } from "hono/streaming";
+import { SSEStreamingApi, streamSSE } from "hono/streaming";
 import { Chat, CHAT_PREFIX, ChatState } from "../../domain/chat.ts";
-import { StreamingApi } from "../../utils.ts";
 import { TrainWorkerListener } from "../../workers/utils.ts";
 import { BaseEndpoint } from "../base-endpoint.ts";
 
@@ -22,7 +21,7 @@ export class TrainListenerEndpoint extends BaseEndpoint {
         return c.text('chat não está treinando no momento');
       }
 
-      return streamText(
+      return streamSSE(
         c,
         async (stream) => {
           await this.listen(chatKVEntry.value, stream);
@@ -36,7 +35,7 @@ export class TrainListenerEndpoint extends BaseEndpoint {
     });
   }
 
-  listen(chat: Chat, streamResponse: StreamingApi) {
+  listen(chat: Chat, streamResponse: SSEStreamingApi) {
     return new Promise((resolve, rejects) => {
       TrainWorkerListener.listenAndSendUpdatesToClient(chat, resolve, rejects, streamResponse);
     })

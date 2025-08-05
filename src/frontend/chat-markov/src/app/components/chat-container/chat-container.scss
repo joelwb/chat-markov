@@ -142,6 +142,26 @@ footer {
     justify-content: center;
     width: 100%;
 
+    .scroll-down {
+        position: absolute;
+        top: -79px;
+        outline: 1px solid var(--border-default);
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        background-color: var(--main-surface-primary);
+        box-sizing: border-box;
+        z-index: 2;
+        opacity: 0;
+        transition: opacity .3s ease-in-out;
+        pointer-events: none;
+
+        &.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+    }
+
     .contained {
         margin-left: -16px;
 

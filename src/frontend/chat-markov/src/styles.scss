@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 body {
     --header-height: 52px;
-    
+
     &.dark {
         --bg-primary: #212121;
         --bg-secondary: #303030;
@@ -53,6 +53,67 @@ body {
         --interactive-bg-accent-press: #004f99;
         --interactive-bg-accent-muted-press: #40484f;
         --interactive-bg-accent-inactive: #013566;
+
+        --white: #fff;
+        --black: #000;
+        --gray-50: #f9f9f9;
+        --gray-100: #ececec;
+        --gray-200: #e3e3e3;
+        --gray-300: #cdcdcd;
+        --gray-400: #b4b4b4;
+        --gray-500: #9b9b9b;
+        --gray-600: #676767;
+        --gray-700: #424242;
+        --gray-750: #2f2f2f;
+        --gray-800: #212121;
+        --gray-900: #171717;
+        --gray-950: #0d0d0d;
+        --red-500: #e02e2a;
+        --red-700: #911e1b;
+        --brand-purple: #ab68ff;
+        --yellow-900: #4d3b00;
+
+        --main-surface-background: #212121e6;
+        --message-surface: #323232d9;
+        --composer-blue-bg: #2a4a6d;
+        --composer-blue-hover: #1a416a;
+        --composer-blue-text: #48aaff;
+        --composer-surface-primary: #303030;
+        --dot-color: var(--white);
+        --text-primary: var(--gray-100);
+        --icon-surface: 240 240 240;
+        --text-primary-inverse: var(--gray-950);
+        --text-secondary: #ffffffb3;
+        --text-tertiary: #ffffff94;
+        --text-quaternary: #ffffff69;
+        --text-placeholder: #fffc;
+        --content-primary: #f2f6fa;
+        --content-secondary: #dbe2e8;
+        --text-error: #f93a37;
+        --border-xlight: #ffffff0d;
+        --border-light: #ffffff1a;
+        --border-medium: #ffffff26;
+        --border-heavy: #fff3;
+        --border-xheavy: #ffffff40;
+        --border-sharp: #ffffff0d;
+        --main-surface-primary: var(--gray-800);
+        --main-surface-primary-inverse: var(--white);
+        --main-surface-secondary: var(--gray-750);
+        --main-surface-secondary-selected: #ffffff26;
+        --main-surface-tertiary: var(--gray-700);
+        --sidebar-surface-primary: var(--gray-900);
+        --sidebar-surface-secondary: var(--gray-800);
+        --sidebar-surface-tertiary: var(--gray-750);
+        --sidebar-title-primary: #f0f0f080;
+        --sidebar-surface: #2b2b2b;
+        --sidebar-body-primary: #ededed;
+        --sidebar-icon: #a4a4a4;
+        --surface-hover: #ffffff26;
+        --link: #7ab7ff;
+        --link-hover: #5e83b3;
+        --surface-error: 249 58 55;
+        --scrollbar-color: #ffffff1a;
+        --scrollbar-color-hover: #fff3;
     }
 
     background-color: var(--bg-primary);
@@ -70,6 +131,12 @@ body {
 
 .cdk-overlay-backdrop {
     opacity: 0 !important;
+}
+
+button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
 }
 
 @keyframes rotate {

@@ -2,7 +2,7 @@ import { Component, computed, ElementRef, inject, signal, viewChild } from '@ang
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterModule } from '@angular/router';
 import { Actions, createDispatchMap, createSelectMap, ofActionCompleted } from '@ngxs/store';
-import { catchError, delay, filter, first, iif, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, delay, filter, first, map, Observable, of, switchMap, tap } from 'rxjs';
 import { Chat, ChatState } from '../../models/chat';
 import { Message, MessageSendedBy } from '../../models/message';
 import { ChatService } from '../../services/chat-service/chat-service';
@@ -34,7 +34,6 @@ export class ChatContainer {
 
   readonly actions = createDispatchMap({
     setTrainingProgress: MainActions.SetTrainingProgress,
-    creatingNewChat: MainActions.CreatingNewChat,
     addChat: MainActions.AddChat,
     addChatToGeneretingText: MainActions.AddChatToGeneratingText,
     removeChatFromGeneratingText: MainActions.RemoveChatFromGeneratingText
@@ -43,6 +42,7 @@ export class ChatContainer {
   readonly creatingNewChat = signal(false);
   readonly progressConvertedToDashoffset = computed(() => numeroMagico * (1 - (this.selectors.trainingProgress() ?? 0) / 100));
   readonly messages = signal<Message[]>([]);
+  readonly isAtBottom = signal<boolean>(true);
 
   readonly sendedBy = MessageSendedBy;
 
@@ -52,26 +52,25 @@ export class ChatContainer {
   constructor() {
     this.actions$.pipe(
       ofActionCompleted(MainActions.SelectChat),
+      tap(() => this.isAtBottom.set(true)),
       map(x => x.action.selectedChat),
-      switchMap(chat => 
-        iif(() => !!chat,
-          this.msgService.getAll(chat!.id).pipe(map(msgs => ({ msgs, chat }))),
-          of({ msgs: [], chat })
-      )
+      switchMap(chat => !!chat ?
+        this.msgService.getAll(chat!.id).pipe(map(msgs => ({ msgs, chat })))
+        :
+        of({ msgs: [], chat })
       ),
       tap(({ msgs }) => this.messages.set(msgs)),
       tap(() => this.scrollTop()),
       delay(100),
       tap(() => this.scrollToBottom()),
-      switchMap(({ chat }) =>
-        iif(() => chat?.state == ChatState.TRAINING && this.selectors.trainingProgress() == null,
-          this.chatService.listenToTrain(chat!.id)
-            .pipe(
-              map(progress => ({ progress, chat: chat! })),
-              this.listenTrainProgress()
-            ),
-          of(null)
-        )
+      switchMap(({ chat }) => chat?.state == ChatState.TRAINING && this.selectors.trainingProgress() == null ?
+        this.chatService.listenToTrain(chat!.id)
+          .pipe(
+            map(progress => ({ progress, chat: chat! })),
+            this.listenTrainProgress()
+          )
+        :
+        of(null)
       ),
       takeUntilDestroyed()
     ).subscribe();
@@ -91,6 +90,12 @@ export class ChatContainer {
     })
   }
 
+  onContainerScroll(): void {
+    const element = this.chatScroll()!.nativeElement;
+    const isAtBottom = element.scrollHeight - element.clientHeight <= element.scrollTop + 60; // Add a small threshold for precision
+    this.isAtBottom.set(isAtBottom);
+  }
+
   send([promptText, file]: [string, File | null]) {
     if (!this.selectors.selectedChat()) {
       this.createNewChat(promptText, file!);
@@ -101,6 +106,8 @@ export class ChatContainer {
     }
   }
 
+
+
   private listenTrainProgress() {
     return (source: Observable<{ progress: null | number, chat: Chat }>) => {
       return source.pipe(
@@ -109,6 +116,8 @@ export class ChatContainer {
           else this.actions.setTrainingProgress(chat.id, progress);
         }),
         filter(({ progress }) => progress == 100),
+        first(),
+        delay(100),
         switchMap(({ chat }) => this.msgService.getAll(chat.id)),
         tap(messages => this.messages.set(messages))
       );
@@ -129,7 +138,6 @@ export class ChatContainer {
           }, { once: true });
 
           this.creatingNewChat.set(true);
-          this.actions.creatingNewChat();
         }),
         switchMap((chat) =>
           this.chatService.train(chat.id, file!).

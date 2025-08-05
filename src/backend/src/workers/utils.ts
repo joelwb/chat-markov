@@ -1,6 +1,6 @@
+import { SSEStreamingApi } from "hono/streaming";
 import { Chat, CHAT_PREFIX, ChatState } from "../domain/chat.ts";
 import { Message, MESSAGE_PREFIX, MessageSendedBy } from "../domain/messages.ts";
-import { StreamingApi } from "../utils.ts";
 import { TrainWorkerMessage, TrainWorkerTypeMessage } from "./train.worker.ts";
 import { WorkerManager } from "./worker-pool.ts";
 
@@ -8,17 +8,17 @@ type PromiseCallback = (value?: any) => void;
 
 export class TrainWorkerListener {
 
-    static listenAndSendUpdatesToClient(chat: Chat, resolve: PromiseCallback, rejects: PromiseCallback, streamResponse: StreamingApi) {
+    static listenAndSendUpdatesToClient(chat: Chat, resolve: PromiseCallback, rejects: PromiseCallback, streamResponse: SSEStreamingApi) {
         WorkerManager.onMessage<TrainWorkerMessage>(chat.id, async msg => {
             if (msg.type == TrainWorkerTypeMessage.INITIATED) {
                 const kv = await Deno.openKv();
                 await kv.set([CHAT_PREFIX, chat.id], { ...chat, state: ChatState.TRAINING } as Chat);
                 kv.close();
 
-                streamResponse.write('0|');
+                streamResponse.writeSSE({ data: (0).toString() })
             }
             else if (msg.type == TrainWorkerTypeMessage.PROGRESS) {
-                streamResponse.write(msg.data! + '|');
+                streamResponse.writeSSE({ data: msg.data!.toString() })
             }
             else if (msg.type == TrainWorkerTypeMessage.FINALIZED) {
                 const kv = await Deno.openKv();
