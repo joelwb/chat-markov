@@ -1,0 +1,34 @@
+.header {
+    margin-left: 260px;
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-primary);
+    position: relative;
+    z-index: 2;
+    margin-right: 15px;
+
+    @media (max-width: 768px) {
+        margin-left: 0;
+
+        .toogle-aside {
+            display: block !important;
+        }
+    }
+
+    .toogle-aside {
+        background-color: transparent;
+        border: 0;
+        cursor: pointer;
+        height: 36px;
+        width: 36px;
+        margin-left: 8px;
+        display: none;
+    }
+
+
+    .model-name {
+        font-size: 18px;
+        margin-left: 18px;
+    }
+}

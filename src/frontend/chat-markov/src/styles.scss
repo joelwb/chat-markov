@@ -1,0 +1,83 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+    --header-height: 52px;
+    
+    &.dark {
+        --bg-primary: #212121;
+        --bg-secondary: #303030;
+        --bg-tertiary: #414141;
+        --bg-scrim: #0d0d0d80;
+        --bg-elevated-primary: #303030;
+        --bg-elevated-secondary: #181818;
+        --bg-status-warning: #4a2206;
+        --bg-status-error: #4d100e;
+        --border-default: #ffffff26;
+        --border-heavy: #fff3;
+        --border-light: #ffffff0d;
+        --border-status-warning: #4a2206;
+        --border-status-error: #4d100e;
+        --text-primary: #fff;
+        --text-secondary: #f3f3f3;
+        --text-tertiary: #afafaf;
+        --text-inverted: #0d0d0d;
+        --text-inverted-static: #fff;
+        --text-accent: #66b5ff;
+        --text-status-warning: #ff9e6c;
+        --text-status-error: #ff8583;
+        --icon-primary: #e8e8e8;
+        --icon-secondary: #cdcdcd;
+        --icon-tertiary: #afafaf;
+        --icon-inverted: #0d0d0d;
+        --icon-inverted-static: #fff;
+        --icon-accent: #66b5ff;
+        --icon-status-warning: #ff9e6c;
+        --icon-status-error: #ff8583;
+        --interactive-bg-primary-default: #fff;
+        --interactive-bg-primary-hover: #fffc;
+        --interactive-bg-primary-press: #ffffffe5;
+        --interactive-bg-primary-inactive: #fff;
+        --interactive-bg-primary-selected: #fff;
+        --interactive-bg-secondary-default: #fff0;
+        --interactive-bg-secondary-hover: #ffffff1a;
+        --interactive-bg-secondary-press: #ffffff0d;
+        --interactive-bg-secondary-inactive: #fff0;
+        --interactive-bg-secondary-selected: #ffffff1a;
+        --interactive-bg-tertiary-default: #212121;
+        --interactive-bg-tertiary-hover: #181818;
+        --interactive-bg-tertiary-press: #0d0d0d;
+        --interactive-bg-tertiary-inactive: #212121;
+        --interactive-bg-tertiary-selected: #212121;
+        --interactive-bg-accent-default: #013566;
+        --interactive-bg-accent-hover: #003f7a;
+        --interactive-bg-accent-muted-hover: #3b4045;
+        --interactive-bg-accent-press: #004f99;
+        --interactive-bg-accent-muted-press: #40484f;
+        --interactive-bg-accent-inactive: #013566;
+    }
+
+    background-color: var(--bg-primary);
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
+* {
+    color: white;
+    font-family: ui-sans-serif, -apple-system, system-ui, Segoe UI, Helvetica, Apple Color Emoji, Arial, sans-serif, Segoe UI Emoji, Segoe UI Symbol;
+    scrollbar-color: #676767 transparent;
+}
+
+.cdk-overlay-backdrop {
+    opacity: 0 !important;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
