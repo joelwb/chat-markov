@@ -18,6 +18,7 @@
                 [hidden]="!(newChat() || !fileSelected())"
                 [attr.placeholder]="canType() ? 'Pergunte alguma coisa' : 'Aguarde a operação terminar'" 
                 (input)="promptText.set(input.textContent)" 
+                (keydown.enter)="sendPrompt(); $event.preventDefault(); $event.stopPropagation()"
                 [attr.contenteditable]="canType()">
             </div>
         </div>
