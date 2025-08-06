@@ -16,3 +16,9 @@ BaseController.init(MessageController);
 app.routes.forEach(r => console.log(`${r.method} ${r.path}`))
 
 Deno.serve(app.fetch)
+
+Deno.addSignalListener("SIGINT", () => {
+    console.log("SIGINT received. Performing cleanup...");
+    // Perform cleanup tasks here
+    Deno.exit()
+});

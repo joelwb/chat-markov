@@ -44,13 +44,27 @@
 				"--allow-read",
 				"--allow-write",
 				"--unstable-kv",
-				"./main.ts",
+				"./main.ts"
 			],
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
 			"label": "deno: compile"
+		},
+		{
+			"type": "deno",
+			"command": "task",
+			"args": [
+				"-c",
+				"src\\backend\\src\\main.ts",
+				"build"
+			],
+			"problemMatcher": [
+				"$deno"
+			],
+			"label": "deno: build",
+			"detail": "main.ts"
 		}
 	]
 }
