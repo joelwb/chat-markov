@@ -34,7 +34,13 @@
     position: relative;
     box-sizing: border-box;
     opacity: 1;
-    transition: opacity 1s ease-out, height 1s ease-out;
+    transition: opacity 1s ease-out, height 1s ease-out, border-top-color .5s ease-in-out;
+
+    border-top: 1px solid transparent;
+
+    &.show-top-border {
+        border-top-color: var(--border-light);
+    }
 
     @starting-style {
         opacity: 0;

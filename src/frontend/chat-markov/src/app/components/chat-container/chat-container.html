@@ -1,5 +1,5 @@
 @if(selectors.selectedChat()) {
-<main class="chat" #chatScroll (scroll)="onContainerScroll()">
+<main class="chat" #chatScroll (scroll)="onContainerScroll()" [class.show-top-border]="!isAtTop()">
     @for (msg of messages(); track msg.id; let last = $last) {
         <div class="contained msg">
             @if (msg.sendBy == sendedBy.USER) {

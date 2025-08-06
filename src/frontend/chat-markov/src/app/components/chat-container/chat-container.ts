@@ -43,6 +43,7 @@ export class ChatContainer {
   readonly progressConvertedToDashoffset = computed(() => numeroMagico * (1 - (this.selectors.trainingProgress() ?? 0) / 100));
   readonly messages = signal<Message[]>([]);
   readonly isAtBottom = signal<boolean>(true);
+  readonly isAtTop = signal<boolean>(true);
 
   readonly sendedBy = MessageSendedBy;
 
@@ -53,6 +54,7 @@ export class ChatContainer {
     this.actions$.pipe(
       ofActionCompleted(MainActions.SelectChat),
       tap(() => this.isAtBottom.set(true)),
+      tap(() => this.isAtTop.set(true)),
       map(x => x.action.selectedChat),
       switchMap(chat => !!chat ?
         this.msgService.getAll(chat!.id).pipe(map(msgs => ({ msgs, chat })))
@@ -92,8 +94,12 @@ export class ChatContainer {
 
   onContainerScroll(): void {
     const element = this.chatScroll()!.nativeElement;
+
     const isAtBottom = element.scrollHeight - element.clientHeight <= element.scrollTop + 60; // Add a small threshold for precision
+    const isAtTop = element.scrollTop <= 10;
+
     this.isAtBottom.set(isAtBottom);
+    this.isAtTop.set(isAtTop);
   }
 
   send([promptText, file]: [string, File | null]) {
