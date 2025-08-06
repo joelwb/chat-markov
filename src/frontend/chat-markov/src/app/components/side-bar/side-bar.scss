@@ -36,6 +36,10 @@ aside {
         bottom: 0;
         right: 0;
         z-index: 1000;
+        
+        .close-button {
+            display: block !important;
+        }
 
         &.open {
             transform: translateX(0);
@@ -59,6 +63,10 @@ aside {
             border-radius: 10px;
             &:hover {
                 background-color: var(--surface-hover);
+            }
+            
+            &.close-button {
+                display: none;
             }
         }
     }

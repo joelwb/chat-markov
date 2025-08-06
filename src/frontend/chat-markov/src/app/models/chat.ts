@@ -11,4 +11,5 @@ export interface Chat {
     name: string;
     state: ChatState;
     createDate: Date;
+    n: number
 }

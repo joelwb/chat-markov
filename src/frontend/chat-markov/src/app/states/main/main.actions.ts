@@ -37,8 +37,13 @@ export namespace MainActions {
     constructor(public chat: Chat) { }
   }
 
-
   export class ToogleSideBar {
     static readonly type = `${ACTION_SCOPE} ToogleNavBar`;
+  }
+
+  export class SelectModelN {
+    static readonly type = `${ACTION_SCOPE} SelectModelN`;
+
+    constructor(public n: number) { }
   }
 }

@@ -2,7 +2,7 @@ import { Component, computed, ElementRef, inject, signal, viewChild } from '@ang
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterModule } from '@angular/router';
 import { Actions, createDispatchMap, createSelectMap, ofActionCompleted } from '@ngxs/store';
-import { catchError, delay, filter, first, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, concatMap, delay, filter, first, map, Observable, of, switchMap, tap } from 'rxjs';
 import { Chat, ChatState } from '../../models/chat';
 import { Message, MessageSendedBy } from '../../models/message';
 import { ChatService } from '../../services/chat-service/chat-service';
@@ -29,7 +29,8 @@ export class ChatContainer {
   readonly selectors = createSelectMap({
     selectedChat: MainState.selectedChat,
     isTrainingSelectedChat: MainState.isTrainingSelectedChat,
-    trainingProgress: MainState.trainingProgressOfSelectedChat
+    trainingProgress: MainState.trainingProgressOfSelectedChat,
+    selectedModelN: MainState.selectedModelN
   })
 
   readonly actions = createDispatchMap({
@@ -131,7 +132,7 @@ export class ChatContainer {
   }
 
   createNewChat(promptText: string, file: File) {
-    this.chatService.create(promptText)
+    this.chatService.create(promptText, this.selectors.selectedModelN())
       .pipe(
         tap(chat => {
           this.actions.addChat(chat);
@@ -194,7 +195,7 @@ export class ChatContainer {
       chats.forEach(x => x.style.minHeight = '');
 
       const lastChat = chats.pop()!;
-      lastChat.style.minHeight = 'calc(100% - 170px)';
+      lastChat.style.minHeight = 'calc(100% - 185px)';
 
       this.scrollToBottom();
     }, 100);
@@ -202,13 +203,13 @@ export class ChatContainer {
     this.actions.addChatToGeneretingText(chatToGenerateText);
     const sub = this.chatService.generateText(chatIdToGenerateText, promptText)
       .pipe(
+        concatMap(response => of(response).pipe(delay(50))),
         tap(({ text }) => {
           if (this.selectors.selectedChat()!.id == chatIdToGenerateText) {
             this.messages.update(previous => {
               generatedMsg.value = text + '█';
               return [...previous.slice(0, -2), promptMsg, generatedMsg];
             });
-
           }
         }),
         filter(({ done }) => done),
@@ -231,7 +232,9 @@ export class ChatContainer {
         delay(100),
         switchMap(() => this.msgService.getAll(chatIdToGenerateText)),
         tap(messages => {
-          if (this.selectors.selectedChat()!.id == chatIdToGenerateText) this.messages.set(messages)
+          if (this.selectors.selectedChat()!.id == chatIdToGenerateText) {
+            this.messages.set(messages);
+          }
         })
       ).subscribe();
   }

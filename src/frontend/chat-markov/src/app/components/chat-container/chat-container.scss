@@ -17,7 +17,7 @@
 }
 
 .undefined-loading {
-    animation: rotate 2s infinite linear;
+    animation: rotate 1s infinite linear;
 }
 
 .chat {
@@ -25,7 +25,7 @@
     font-size: 16px;
     line-height: 28px;
     font-weight: 400;
-    overflow: scroll;
+    overflow-y: scroll;
     display: flex;
     width: 100%;
     margin-bottom: -55px;

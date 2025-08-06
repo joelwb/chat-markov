@@ -15,8 +15,8 @@ export class ChatService {
     return this.http.get<Chat[]>(`${this.baseRoute}`);
   }
 
-  create(name: string): Observable<Chat> {
-    return this.http.post<Chat>(`${this.baseRoute}`, { name })
+  create(name: string, n: number): Observable<Chat> {
+    return this.http.post<Chat>(`${this.baseRoute}`, { name, n })
   }
 
   delete(chatId: string): Observable<void> {

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { insertItem, patch, removeItem } from '@ngxs/store/operators';
+import { insertItem, patch, removeItem, updateItem } from '@ngxs/store/operators';
 import { tap } from 'rxjs';
 import { Chat, ChatState } from '../../models/chat';
 import { ChatService } from '../../services/chat-service/chat-service';
@@ -11,6 +11,7 @@ export interface MainStateModel {
     chats: Chat[];
     trainingProgress: Record<string, number>;
     generatingTextChatsId: string[];
+    selectedModelN: number
 }
 
 @State<MainStateModel>({
@@ -19,7 +20,8 @@ export interface MainStateModel {
         selectedChat: null,
         chats: [],
         trainingProgress: {},
-        generatingTextChatsId: []
+        generatingTextChatsId: [],
+        selectedModelN: 4
     }
 })
 @Injectable()
@@ -43,10 +45,10 @@ export class MainState {
 
     @Selector()
     static trainingProgressOfSelectedChat(state: MainStateModel): number | null {
-        return state.selectedChat?.id ? state.trainingProgress[state.selectedChat.id] : null;
+        return state.selectedChat?.id ? state.trainingProgress[state.selectedChat.id] ?? null : null;
     }
 
-    
+
     @Selector()
     static isTrainingSelectedChat(state: MainStateModel): boolean {
         return state.selectedChat?.id ? MainState.allTrainingChatsId(state).includes(state.selectedChat.id) : false;
@@ -62,9 +64,14 @@ export class MainState {
         return state.generatingTextChatsId;
     }
 
+    @Selector()
+    static selectedModelN(state: MainStateModel): number {
+        return state.selectedChat ? state.selectedChat.n ?? 7 : state.selectedModelN;
+    }
+
     @Action(MainActions.SelectChat)
     selectChat(ctx: StateContext<MainStateModel>, { selectedChat }: MainActions.SelectChat) {
-        ctx.patchState({ selectedChat });
+        ctx.patchState({ selectedChat, selectedModelN: 7 });
     }
 
     @Action(MainActions.AddChat)
@@ -97,27 +104,34 @@ export class MainState {
     setTrainingProgress(ctx: StateContext<MainStateModel>, { chatId, progress }: MainActions.SetTrainingProgress) {
         let { trainingProgress, selectedChat, chats } = ctx.getState();
 
-        const copyTrainingProgress = {...trainingProgress};
-        if (progress === null) {
+        const copyTrainingProgress = { ...trainingProgress };
+        if (progress === null || progress === -1) {
             delete copyTrainingProgress[chatId];
         } else {
             copyTrainingProgress[chatId] = progress;
         }
 
         const chat = chats.find(x => x.id == chatId)!;
+        const previousState = chat.state;
         chat.state = progress === null ? ChatState.TRAINED : ChatState.TRAINING;
 
         if (selectedChat?.id == chatId) {
             selectedChat = chat;
         }
 
-        ctx.setState(patch({
-            chats: removeItem<Chat>(x => x.id == chatId),
-        }));
+        if (progress === -1 && previousState != ChatState.TRAINING) {
+            ctx.setState(patch({
+                chats: removeItem(x => x.id == chatId),
+            }));
 
-        ctx.setState(patch({
-            chats: insertItem(chat, 0)
-        }));
+            ctx.setState(patch({
+                chats: insertItem(chat, 0)
+            }));
+        } else {
+            ctx.setState(patch({
+                chats: updateItem(x => x.id == chatId, chat),
+            }));
+        }
 
         ctx.patchState({ trainingProgress: copyTrainingProgress, selectedChat })
     }
@@ -128,5 +142,10 @@ export class MainState {
             .pipe(
                 tap((chats) => ctx.patchState({ chats }))
             );
+    }
+
+    @Action(MainActions.SelectModelN)
+    selectModelN(ctx: StateContext<MainStateModel>, { n }: MainActions.SelectModelN) {
+        ctx.patchState({ selectedModelN: n });
     }
 }

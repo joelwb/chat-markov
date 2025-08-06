@@ -48,7 +48,6 @@ async function train(filename: string, chat: Chat) {
 
         chainStream = markovchain.addToChain(chunk);
         for await (const _ of chainStream) {
-
             bar.increment();
             i++;
             const trainProgress = Math.min(Math.ceil((i / max) * 100), 100);

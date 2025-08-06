@@ -64,7 +64,6 @@ export class GenerateTextEndpoint extends BaseEndpoint {
                         if (canceled) break;
                         await stream.write(token);
                         msgValue.push(token);
-                        await stream.sleep(5);
                     }
                     
                     db.close();

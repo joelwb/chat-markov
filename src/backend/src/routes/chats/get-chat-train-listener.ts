@@ -13,12 +13,14 @@ export class TrainListenerEndpoint extends BaseEndpoint {
       const chatKVEntry = await kv.get<Chat>([CHAT_PREFIX, chatId]);
       kv.close();
 
-      if (!chatKVEntry.value) return c.status(404);
+      if (!chatKVEntry.value) {
+        c.status(404);
+        return c.text(null);
+      }
 
       else if (!chatKVEntry.value.hasDb || chatKVEntry.value.state != ChatState.TRAINING) {
-        kv.close();
         c.status(400);
-        return c.text('chat não está treinando no momento');
+        return c.text('Chat não está treinando no momento');
       }
 
       return streamSSE(

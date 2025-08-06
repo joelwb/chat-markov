@@ -6,13 +6,16 @@
     background-color: var(--bg-primary);
     position: relative;
     z-index: 2;
-    margin-right: 15px;
 
     @media (max-width: 768px) {
         margin-left: 0;
 
         .toogle-aside {
             display: block !important;
+        }
+
+        .model-name {
+            margin: auto !important;
         }
     }
 
@@ -30,5 +33,48 @@
     .model-name {
         font-size: 18px;
         margin-left: 18px;
+        min-height: 36px;
+        padding: 0 10px;
+        border-radius: 10px;
+        line-height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+
+        &.readonly {
+            cursor: auto;
+        }
+
+        &:not(.readonly):hover, 
+        &.popopver-open {
+            background-color: var(--surface-hover);
+        }
+    }
+}
+
+.popover-container {
+    background-color: var(--bg-elevated-primary);
+    border-radius: 18px;
+    padding: 4px 0;
+    margin: 0;
+    list-style-type: none;
+
+    li {
+        display: flex;
+        margin: 0 6px;
+        padding: 6px 32px 6px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        gap: 6px;
+        align-items: center;
+        line-height: 20px;
+        font-size: 14px;
+        box-sizing: border-box;
+        min-height: 36px;
+
+        &:hover {
+            background-color: var(--interactive-bg-secondary-hover);
+        }
     }
 }

@@ -1,10 +1,16 @@
-export class BytePairEncoder {
-  private vocab: Map<string, number> = new Map()
-  private merges: Map<string, number> = new Map()
-  private vocabSizeLimit: number
+const file: { vocab: Record<string, number>, merges: Record<string, number> } = JSON.parse(Deno.readTextFileSync('./src/backend/src/markov/byte-pair-enconder-data.json'))
 
-  constructor(vocabSizeLimit: number = 1000) {
-    this.vocabSizeLimit = vocabSizeLimit
+export class BytePairEncoder {
+  private vocab: Map<string, number> = new Map();
+  private merges: Map<string, number> = new Map();
+  private vocabSizeLimit: number;
+
+  constructor(vocabSizeLimit: number) {
+    this.vocabSizeLimit = vocabSizeLimit;
+    if (Object.keys(file.vocab).length > 0) {
+      this.vocab = new Map(Object.entries(file.vocab))
+      this.merges = new Map(Object.entries(file.merges))
+    }
   }
 
   private getStats(): Map<string, number> {
@@ -72,13 +78,23 @@ export class BytePairEncoder {
   public getMerges(): Map<string, number> {
     return this.merges
   }
+
+  public save() {
+    Deno.writeTextFileSync(
+      './src/backend/src/markov/byte-pair-enconder-data.json', 
+      JSON.stringify({ 
+        vocab: Object.fromEntries(this.vocab),
+        merges: Object.fromEntries(this.merges)
+      }, null, 4)
+    );
+  }
 }
 
 
 export class BPETokenizer {
   private encoder: BytePairEncoder
 
-  constructor(vocabSize: number = 1000) {
+  constructor(vocabSize: number = 10000) {
     this.encoder = new BytePairEncoder(vocabSize)
   }
 
@@ -154,6 +170,7 @@ export class BPETokenizer {
     const words = this.preprocessText(text)
     if (train) {
       this.encoder.train(words);
+      this.encoder.save();
     }
     const merges = this.encoder.getMerges()
     const tokens: string[] = []
