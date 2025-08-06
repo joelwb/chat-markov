@@ -3,6 +3,7 @@ import * as progress from 'npm:cli-progress';
 import { Chat } from "../domain/chat.ts";
 import { DEFAULT_MARKOV_CHAIN_N, FlatMarkovChain } from "../markov/flat-markov-chain.ts";
 import { getDatabasePath, getTrainFilesPath } from "../utils.ts";
+import { BaseWorker } from "./base-worker.ts";
 
 export enum TrainWorkerTypeMessage {
     INITIATED,
@@ -20,45 +21,41 @@ export interface TrainWorkerInputMessage {
     chat: Chat;
 }
 
-async function train(filename: string, chat: Chat) {
+export class TrainWorker extends BaseWorker<TrainWorkerInputMessage, TrainWorkerMessage> {
+  public async *handle({ filename, chat }: TrainWorkerInputMessage): AsyncIterable<TrainWorkerMessage> {
     const filepath = getTrainFilesPath(filename);
-
     const file = await Deno.open(filepath, { read: true });
     const info = await Deno.stat(filepath);
 
-    self.postMessage({type: TrainWorkerTypeMessage.INITIATED, data: null } as TrainWorkerMessage);
+    yield { type: TrainWorkerTypeMessage.INITIATED, data: null };
 
-    const stream = file.readable
-        .pipeThrough(new TextDecoderStream());
+    const stream = file.readable.pipeThrough(new TextDecoderStream());
 
     const n = chat.n ?? DEFAULT_MARKOV_CHAIN_N;
-    const chunkSize = 65536; // 64 KB
-
+    const chunkSize = 65536;
     const bar = new progress.SingleBar({}, progress.Presets.shades_classic);
     const max = Math.ceil(info.size / chunkSize) * n;
     bar.start(max, 0);
 
     const db = new DB(getDatabasePath(chat.id));
-
     const markovchain = new FlatMarkovChain(db, n);
 
-    let chainStream: ReadableStream;
     let i = 0;
     for await (const chunk of stream) {
-
-        chainStream = markovchain.addToChain(chunk);
-        for await (const _ of chainStream) {
-            bar.increment();
-            i++;
-            const trainProgress = Math.min(Math.ceil((i / max) * 100), 100);
-            self.postMessage({ type: TrainWorkerTypeMessage.PROGRESS, data: trainProgress } as TrainWorkerMessage);
-        }
+      const chainStream = markovchain.addToChain(chunk);
+      for await (const _ of chainStream) {
+        bar.increment();
+        i++;
+        const trainProgress = Math.min(Math.ceil((i / max) * 100), 100);
+        yield { type: TrainWorkerTypeMessage.PROGRESS, data: trainProgress };
+      }
     }
 
-    self.postMessage({ type: TrainWorkerTypeMessage.FINALIZED, data: null } as TrainWorkerMessage);
+    yield { type: TrainWorkerTypeMessage.FINALIZED, data: null };
     bar.stop();
+  }
 }
 
-self.onmessage = async (e: MessageEvent<TrainWorkerInputMessage>) => {
-    await train(e.data.filename, e.data.chat);
+if (typeof self !== "undefined" && "postMessage" in self) {
+  new TrainWorker(); // para registrar o `onmessage` real
 }

@@ -26,7 +26,9 @@
                 "--allow-read",
                 "--allow-write",
                 "--allow-net",
-                "--unstable-kv"
+                "--allow-env",
+                "--unstable-kv",
+                "--env-file=${workspaceFolder}/src/backend/.env"
             ],
             "attachSimplePort": 9229
         }
