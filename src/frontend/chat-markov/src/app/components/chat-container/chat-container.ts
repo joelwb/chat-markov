@@ -129,7 +129,6 @@ export class ChatContainer {
       .pipe(
         tap(chat => {
           this.actions.addChat(chat);
-          this.messages.set([{ chatId: chat.id, sendBy: MessageSendedBy.USER, value: promptText, filename: file!.name } as Message]);
           const target = this.el.nativeElement.querySelector('.empty-state') as HTMLElement;
 
           target.addEventListener('transitionend', () => {
