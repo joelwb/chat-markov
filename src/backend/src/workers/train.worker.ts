@@ -1,8 +1,8 @@
 import { DB } from "https://deno.land/x/sqlite@v3.9.1/mod.ts";
+import * as progress from 'npm:cli-progress';
 import { Chat } from "../domain/chat.ts";
 import { DEFAULT_MARKOV_CHAIN_N, FlatMarkovChain } from "../markov/flat-markov-chain.ts";
 import { getDatabasePath, getTrainFilesPath } from "../utils.ts";
-import * as progress from 'npm:cli-progress';
 
 export enum TrainWorkerTypeMessage {
     INITIATED,
@@ -31,7 +31,7 @@ async function train(filename: string, chat: Chat) {
     const stream = file.readable
         .pipeThrough(new TextDecoderStream());
 
-    const n = DEFAULT_MARKOV_CHAIN_N;
+    const n = chat.n ?? DEFAULT_MARKOV_CHAIN_N;
     const chunkSize = 65536; // 64 KB
 
     const bar = new progress.SingleBar({}, progress.Presets.shades_classic);

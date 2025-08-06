@@ -14,4 +14,5 @@ export interface Chat {
     state: ChatState;
     createdDate: Date;
     updatedDate: Date;
+    n: number;
 }

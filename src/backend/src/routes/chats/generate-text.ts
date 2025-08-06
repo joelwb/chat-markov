@@ -46,7 +46,7 @@ export class GenerateTextEndpoint extends BaseEndpoint {
             kv.close();
 
             const db = new DB(getDatabasePath(chatId));
-            const markovchain = new FlatMarkovChain(db, DEFAULT_MARKOV_CHAIN_N);
+            const markovchain = new FlatMarkovChain(db, chat.n ?? DEFAULT_MARKOV_CHAIN_N);
 
             return streamText(
                 c,
