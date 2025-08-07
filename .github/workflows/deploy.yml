@@ -30,6 +30,6 @@ jobs:
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: joelwb-chat-markov
+          project: joelwb-chat-markov-backend
           entrypoint: "main.ts"
           root: src/backend/src
