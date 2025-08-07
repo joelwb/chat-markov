@@ -31,5 +31,5 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: joelwb-chat-markov-backend
-          entrypoint: "src/main.ts"
-          root: src/backend
+          entrypoint: src/backend/src/main.ts"
+          root: "."
