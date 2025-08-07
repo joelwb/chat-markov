@@ -33,3 +33,5 @@ jobs:
           project: joelwb-chat-markov-backend
           entrypoint: src/backend/src/main.ts
           root: "."
+          includes:
+            src/backend/**
