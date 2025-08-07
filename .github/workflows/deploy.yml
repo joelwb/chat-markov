@@ -33,5 +33,11 @@ jobs:
           project: joelwb-chat-markov-backend
           entrypoint: src/backend/src/main.ts
           root: "."
-          includes:
+          includes: |
             src/backend/**
+          excludes: |
+            src/backend/.env
+            src/frontend/**
+            train-files/**
+            databases/**
+            .vscode/**
