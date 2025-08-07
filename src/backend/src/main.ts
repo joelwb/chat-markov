@@ -1,13 +1,13 @@
 import { Hono } from 'hono';
 
-//import { cors } from 'hono/cors';
+import { cors } from 'hono/cors';
 import { BaseController } from "./routes/base-controller.ts";
 import { BaseEndpoint } from "./routes/base-endpoint.ts";
 import { ChatController } from "./routes/chats/chat.controller.ts";
 import { MessageController } from "./routes/messages/message.controller.ts";
 
 const app = new Hono();
-//app.use('*', cors())
+app.use('*', cors())
 
 BaseEndpoint.setApp(app)
 BaseController.init(ChatController);
