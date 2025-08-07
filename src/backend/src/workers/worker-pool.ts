@@ -28,6 +28,10 @@ export class WorkerManager {
     return this.workers.get(id);
   }
 
+  static getAll(): Record<string, Worker> {
+    return Object.fromEntries(this.workers);
+  }
+
   static has(id: string): boolean {
     return this.workers.has(id);
   }
