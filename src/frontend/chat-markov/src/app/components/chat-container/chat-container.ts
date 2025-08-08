@@ -124,7 +124,7 @@ export class ChatContainer {
         }),
         filter(({ progress }) => progress == 100),
         first(),
-        delay(100),
+        delay(1000),
         switchMap(({ chat }) => this.msgService.getAll(chat.id)),
         tap(messages => this.messages.set(messages))
       );

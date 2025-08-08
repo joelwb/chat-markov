@@ -17,8 +17,14 @@ BaseController.init(MessageController);
 
 app.routes.forEach(r => console.log(`${r.method} ${r.path}`))
 
-if (!exists('databases')) await Deno.mkdir('databases');
-if (!exists('train-files')) await Deno.mkdir('train-files');
+if (!await exists('databases')) {
+    console.log('criando pasta de databases'),
+    await Deno.mkdir('databases');
+}
+if (!await exists('train-files')) {
+    console.log('criando pasta de train-files')
+    await Deno.mkdir('train-files');
+}
 
 Deno.serve(app.fetch)
 

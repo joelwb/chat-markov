@@ -66,12 +66,12 @@ export class MainState {
 
     @Selector()
     static selectedModelN(state: MainStateModel): number {
-        return state.selectedChat ? state.selectedChat.n ?? 7 : state.selectedModelN;
+        return state.selectedChat ? state.selectedChat.n ?? 4 : state.selectedModelN;
     }
 
     @Action(MainActions.SelectChat)
     selectChat(ctx: StateContext<MainStateModel>, { selectedChat }: MainActions.SelectChat) {
-        ctx.patchState({ selectedChat, selectedModelN: 7 });
+        ctx.patchState({ selectedChat, selectedModelN: 4 });
     }
 
     @Action(MainActions.AddChat)

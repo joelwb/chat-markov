@@ -23,12 +23,10 @@
                         </div>
                     </div>
                 }
-                <div class="user-msg">
-                    {{msg.value}}
-                </div>
+                <pre class="user-msg">{{msg.value!.trim()}}</pre>
             }
             @else {
-                <p>{{msg.value}}</p>
+                <pre>{{msg.value}}</pre>
             }
         </div>
     }

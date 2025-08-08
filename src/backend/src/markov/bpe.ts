@@ -99,16 +99,12 @@ export class BPETokenizer {
   }
 
   private preprocessText(text: string): string[] {
-    // separa pontuação e normaliza acentos
-    const normalized = text.normalize("NFKC")
-
     // espaço entre palavras deve ser mantido
     // exemplo: "Olá, mundo! Tudo bem com você?" -> ["olá", ", ", "mundo", "! ", "tudo ", "bem ", "com ", "você", "?"]
-    const words = normalized
+    const words = text
       .split(/(\s+|[\p{P}$+<=>^`|~])/gu)
       // concatena 2 itens da lista se o próximo for um espaço
       .reduce((acc: string[], curr: string) => {
-        // se
         if ((curr === " " || curr === '') && acc.length > 0) {
           acc[acc.length - 1] += curr;
         } else {
@@ -117,7 +113,6 @@ export class BPETokenizer {
         return acc;
       }, [])
       .filter(Boolean)
-      .filter(word => word.trim() !== "");
 
     // adiciona o token de fim de palavra
     // para que o BPE possa tratar corretamente

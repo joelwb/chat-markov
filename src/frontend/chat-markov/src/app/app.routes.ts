@@ -8,6 +8,6 @@ export const routes: Routes = [
     },
     {
         path: ':chatId',
-        component: Main
+        component: Main,
     }
 ];

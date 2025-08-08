@@ -65,6 +65,14 @@ export class GenerateTextEndpoint extends BaseEndpoint {
                         await stream.write(token);
                         msgValue.push(token);
                     }
+
+                    if (msgValue.length == 0) {
+                        for (const token of 'Não foi possivel gerar texto a partir desse prompt, tente outro prompt.'.split('')) {
+                            await stream.write(token);
+                            msgValue.push(token);
+                            await stream.sleep(10);
+                        }
+                    }
                     
                     db.close();
                     const msgId = crypto.randomUUID();
@@ -74,7 +82,7 @@ export class GenerateTextEndpoint extends BaseEndpoint {
                         filename: null,
                         id: msgId,
                         sendBy: MessageSendedBy.MARKOV,
-                        value: msgValue.join("")
+                        value: msgValue.join('')
                     };
 
                     kv = await Deno.openKv();
