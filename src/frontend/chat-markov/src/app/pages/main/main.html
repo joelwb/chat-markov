@@ -3,3 +3,12 @@
   <app-side-bar/>
   <app-chat-container/>
 </div>
+
+@if(showBackground()) {
+  <div class="background" [class.exiting]="exiting()">
+    <div class="gradient"></div>
+    <img src="1920.webp">
+  </div>
+}
+
+

@@ -48,12 +48,7 @@ export class SideBar {
     this.breakpointObserver
       .observe(['(max-width: 768px)'])
       .pipe(takeUntilDestroyed()) 
-      .subscribe(result => {
-        console.log(result)
-        if (result.matches) {
-          this.isOpen.set(false);
-        } 
-      });
+      .subscribe(result => this.isOpen.set(!result.matches));
   }
 
   deleteChat(chatId: string) {

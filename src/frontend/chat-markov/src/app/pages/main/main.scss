@@ -2,3 +2,48 @@
     display: flex;
     height: 100%;
 }
+
+:host {
+    --tw-gradient-position: to bottom in oklab;
+    --tw-gradient-from: transparent;
+    --tw-gradient-from-position: 0;
+    --tw-gradient-to: #000;
+    --tw-gradient-to-position: 100%;
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+}
+
+.gradient {
+    background-image: linear-gradient(var(--tw-gradient-stops));
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+}
+
+img {
+    opacity: .3;
+    filter: blur(40px);
+    scale: 1.02;
+}
+
+.background {
+    position: fixed;
+    pointer-events: none;
+    inset: 0;
+    transition: opacity 1s ease-out;
+
+    &.exiting {
+        opacity: 0;
+        transition: opacity 1s ease-out;
+    }
+
+    @starting-style {
+        opacity: .3;
+    }
+}
+
+app-header,
+.app {
+    height: 100%;
+    z-index: 2;
+    position: relative;
+}

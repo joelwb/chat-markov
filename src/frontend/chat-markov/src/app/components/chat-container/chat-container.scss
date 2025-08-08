@@ -124,13 +124,33 @@
 
 .empty-state {
     margin-bottom: 28px;
-    font-size: 28px;
+    display: flex;
+    flex-direction: column;
     margin-top: calc(30dvh + 25px);
-    font-size: 28px;
     opacity: 1;
     flex: 0;
     padding: 0 16px;
     text-align: center;
+    gap: 12px;
+    max-width: 448px;
+
+    h1, p {
+        margin: 0;
+    }
+
+    h1 {
+        font-size: 28px;
+        line-height: 34px;
+        letter-spacing: 0.38px;
+        font-weight: 400;
+    }
+
+    p {
+        font-size: 16px;
+        letter-spacing: -0.32px;
+        line-height: 24px;
+        font-weight: 400;
+    }
 
     @starting-style {
         opacity: 0;
@@ -172,7 +192,7 @@ footer {
     .contained {
         margin-left: -16px;
 
-        &:after {
+        &.gradient:after {
             --fade-start-color:
                 color-mix(in lch longer hue, #212121, transparent 100%);
             --fade-end-color:

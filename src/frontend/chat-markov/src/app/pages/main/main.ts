@@ -1,4 +1,4 @@
-import { Component, effect, input, OnInit, untracked } from '@angular/core';
+import { Component, effect, ElementRef, inject, input, OnInit, signal, untracked } from '@angular/core';
 import { createDispatchMap, select } from '@ngxs/store';
 import { first, tap } from 'rxjs';
 import { ChatContainer } from '../../components/chat-container/chat-container';
@@ -15,7 +15,7 @@ import { MainState } from '../../states/main/main.state';
   styleUrl: './main.scss'
 })
 export class Main implements OnInit {
-  readonly chatId = input<string | null>(null);
+  readonly chatId = input<string | 'new'>('new');
 
   readonly chats = select(MainState.chats);
   readonly selectedChat = select(MainState.selectedChat);
@@ -24,14 +24,32 @@ export class Main implements OnInit {
     selectChat: MainActions.SelectChat
   });
 
+  private readonly el = inject(ElementRef);
+  showBackground = signal(false);
+  exiting = signal(false);
 
   constructor() {
     effect(() => {
       const chatId = this.chatId();
       const chat = untracked(() => this.chats().find(c => c.id == chatId) ?? null);
-      const selectedChat = untracked(() => this.selectedChat())
+      const selectedChat = untracked(() => this.selectedChat());
+
+      if (chatId != 'new' && !selectedChat) {
+        const target = this.el.nativeElement.querySelector('.background');
+        target?.addEventListener('transitionend', () => this.hideBackground());
+        if (target) this.exiting.set(true);
+      }
+      if (chatId == 'new') {
+        this.showBackground.set(true);
+      }
+
       if (chat?.id !== selectedChat?.id) this.actions.selectChat(chat);
     })
+  }
+
+  hideBackground() {
+    this.showBackground.set(false);
+    this.exiting.set(false);
   }
 
   ngOnInit(): void {
