@@ -1,0 +1,11 @@
+services:
+  deno:
+    build: src/backend
+    ports:
+      - 8000:8000
+  angular:
+    build: src/frontend/chat-markov
+    ports:
+      - 80:4000
+    depends_on: 
+      - deno
