@@ -1,13 +1,14 @@
-import { Component, computed, ElementRef, inject, output, signal, viewChild } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { afterNextRender, Component, computed, ElementRef, inject, Injector, output, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { createDispatchMap, createSelectMap } from '@ngxs/store';
-import { tap } from 'rxjs';
+import { skip, tap } from 'rxjs';
 import { MainActions } from '../../states/main/main.actions';
 import { MainState } from '../../states/main/main.state';
 
 @Component({
   selector: 'app-prompt-area',
-  imports: [],
+  imports: [NgTemplateOutlet],
   standalone: true,
   templateUrl: './prompt-area.html',
   styleUrl: './prompt-area.scss'
@@ -29,7 +30,7 @@ export class PromptArea {
   readonly canType = computed(() => !this.selectors.isGeneratingTextForSelectedChat() && !this.selectors.isTrainingSelectedChat());
   readonly valid = computed(() => {
     if (this.newChat()) {
-       return this.promptText() && this.fileSelected()
+      return this.promptText() && this.fileSelected()
     }
 
     return this.promptText() || this.fileSelected();
@@ -37,28 +38,77 @@ export class PromptArea {
 
   readonly promptText = signal<string | null>(null);
   readonly send = output<[string, File | null]>();
-  readonly promptInput = viewChild.required<ElementRef<HTMLDivElement>>('input');
+  readonly promptInput = viewChild<ElementRef<HTMLDivElement>>('input');
   readonly fileSelected = signal<File | null>(null);
   readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-
+  readonly showSingleLineInput = signal<boolean>(true);
+  readonly injector = inject(Injector);
 
   constructor() {
     toObservable(this.selectors.selectedChat).pipe(
       tap(() => {
         this.promptText.set(null)
-        this.promptInput().nativeElement.textContent = null;
+        if (this.promptInput()) this.promptInput()!.nativeElement.textContent = null;
         this.clearFileSelected();
+        this.showSingleLineInput.set(true);
       }),
       takeUntilDestroyed()
     ).subscribe();
+
+    toObservable(this.showSingleLineInput)
+      .pipe(
+        skip(1),
+        tap(() => afterNextRender({
+          write: () => {
+            this.promptInput()!.nativeElement.innerHTML = this.promptText() ?? '';
+            this.promptInput()!.nativeElement.focus();
+            this.moveCaretToEnd(this.promptInput()!.nativeElement);
+          }
+        }, { injector: this.injector })),
+        takeUntilDestroyed()
+      ).subscribe();
+  }
+
+  onKeyDown(event: KeyboardEvent, input: HTMLDivElement) {
+    if (event.key === 'Enter') {
+      if (event.shiftKey) {
+        if (this.showSingleLineInput()) this.showSingleLineInput.set(false);
+      } else {
+        event.preventDefault();
+        event.stopPropagation();
+        this.sendPrompt();
+      }
+    }
+  }
+
+  onInput(input: HTMLDivElement) {
+    this.promptText.set(input.textContent);
+    if (!this.promptText()?.trim()?.length) {
+      this.showSingleLineInput.set(true);
+    }
+    else if (this.promptText()?.includes('\n')) {
+      this.showSingleLineInput.set(false);
+    }
+    else if (input.scrollWidth > input.clientWidth) {
+      this.showSingleLineInput.set(false);
+    }
+  }
+
+  moveCaretToEnd(el: HTMLElement) {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false); // false = final
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
   }
 
   sendPrompt() {
     if (!this.valid()) return;
 
-    this.send.emit([this.promptInput().nativeElement.textContent!, this.fileSelected()]);
+    this.send.emit([this.promptInput()!.nativeElement.textContent!, this.fileSelected()]);
     this.promptText.set(null);
-    this.promptInput().nativeElement.textContent = null;
+    this.promptInput()!.nativeElement.textContent = null;
     this.clearFileSelected();
   }
 
