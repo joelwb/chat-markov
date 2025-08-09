@@ -45,7 +45,7 @@
         [class.single-line]="showSingleLineInput()"
         [hidden]="!(newChat() || !fileSelected())"
         [attr.placeholder]="canType() ? 'Pergunte alguma coisa' : 'Aguarde a operação terminar'" 
-        (keydown)="onKeyDown($event, input)"
+        (keydown)="onKeyDown($event)"
         (input)="onInput(input)"
         [attr.contenteditable]="canType() ? 'plaintext-only' : false">
     </div>

@@ -48,7 +48,10 @@ export class PromptArea {
     toObservable(this.selectors.selectedChat).pipe(
       tap(() => {
         this.promptText.set(null)
-        if (this.promptInput()) this.promptInput()!.nativeElement.textContent = null;
+        if (this.promptInput()) {
+          this.promptInput()!.nativeElement.textContent = null;
+          setTimeout(() => this.promptInput()!.nativeElement.blur());
+        }
         this.clearFileSelected();
         this.showSingleLineInput.set(true);
       }),
@@ -69,28 +72,45 @@ export class PromptArea {
       ).subscribe();
   }
 
-  onKeyDown(event: KeyboardEvent, input: HTMLDivElement) {
+  onKeyDown(event: KeyboardEvent) {
+    const input = event.target as HTMLElement;
+    const maxChars = 50;
+    const textLength = input.innerText.length;
+
+    const allowedKeys = [
+      'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+      'Control', 'Meta', 'Shift', 'Alt', 'Tab', 'Enter'
+    ];
+
+    if (textLength >= maxChars && !allowedKeys.includes(event.key) && this.newChat()) {
+      event.preventDefault();
+      return;
+    }
+
     if (event.key === 'Enter') {
-      if (event.shiftKey) {
-        if (this.showSingleLineInput()) this.showSingleLineInput.set(false);
-      } else {
+      if (!event.shiftKey) {
         event.preventDefault();
         event.stopPropagation();
         this.sendPrompt();
+      } else if (this.newChat()) {
+        event.preventDefault();
+        event.stopPropagation();
       }
     }
   }
 
   onInput(input: HTMLDivElement) {
     this.promptText.set(input.textContent);
-    if (!this.promptText()?.trim()?.length) {
-      this.showSingleLineInput.set(true);
-    }
-    else if (this.promptText()?.includes('\n')) {
-      this.showSingleLineInput.set(false);
-    }
-    else if (input.scrollWidth > input.clientWidth) {
-      this.showSingleLineInput.set(false);
+    if (!this.newChat()) {
+      if (!this.promptText()?.trim().length) {
+        this.showSingleLineInput.set(true);
+      }
+      else if (this.promptText()?.includes('\n')) {
+        this.showSingleLineInput.set(false);
+      }
+      else if (input.scrollWidth > input.clientWidth) {
+        this.showSingleLineInput.set(false);
+      }
     }
   }
 
