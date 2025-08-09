@@ -1,7 +1,7 @@
 .area {
     width: 100%;
     background-color: var(--bg-elevated-primary);
-    /*min-height: 105px;*/
+    height: 56px;
     border-radius: 28px;
     display: flex;
     box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 12px 0px, rgba(255, 255, 255, 0.2) 0px 0px 1px 0px inset;
@@ -55,6 +55,9 @@
 
                 .file-name {
                     font-weight: 600;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 95%;
                 }
             }
         }
