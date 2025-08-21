@@ -2,7 +2,8 @@
 
 Este projeto é um clone visual do ChatGPT, mas em vez de utilizar um modelo de linguagem (LLM), a geração de texto é feita com um algoritmo baseado em **Cadeia de Markov** implementado em **Deno**.
 
-O objetivo é explorar conceitos de geração de texto e streaming de dados de forma simples, mostrando como é possível montar um chat interativo usando tecnologias modernas sem depender de grandes modelos.
+O objetivo é explorar conceitos de geração de texto e streaming de dados de forma simples, usando tecnologias modernas sem depender de grandes modelos, e botar em pratica as principais novidades do Angular e Deno nas versões mais atuais.
+O texto gerado de forma alguma terá qualidade semelhante ao de uma LLM, muitas vezes nem terão coesão textual. Então use apenas para aprender o funcionamento do algoritmo.
 
 ## Tecnologias utilizadas
 
