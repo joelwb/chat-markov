@@ -7,7 +7,7 @@ O objetivo é explorar conceitos de geração de texto e streaming de dados de f
 ## Tecnologias utilizadas
 
 - **Front-end:** [Angular 20](https://angular.dev/)
-- **Back-end:** [Deno](https://deno.com/) com API própria
+- **Back-end:** [Deno](https://deno.com/) API com Hono
 - **Comunicação em tempo real:** Streaming de dados e **Server-Sent Events (SSE)**
 - **Execução paralela:** Uso de **WebWorkers** para processar a lógica de Cadeia de Markov em paralelo, mantendo o event loop principal livre para atender as requisições
 - **Infraestrutura:** Docker para build e execução
