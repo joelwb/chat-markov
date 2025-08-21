@@ -1,4 +1,4 @@
-# ChatGPT Clone com Markov Chain
+# Gerador de texto "ChatGPT Like" usando Markov Chain
 
 Este projeto é um clone visual do ChatGPT, mas em vez de utilizar um modelo de linguagem (LLM), a geração de texto é feita com um algoritmo baseado em **Cadeia de Markov** implementado em Typescript com **Deno**.
 
